@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link href="https://fonts.googleapis.com/css2?family=Rubik+Puddles&amp;display=swap" rel="stylesheet">
+    <style>
+        @font-face {
+            font-family: 'Minecraft';
+            src: url("MinecraftStandard.otf") format('opentype');
+            font-weight: normal;
+            font-style: normal;
+        }
+
+        body {
+            font-family: cursive;
+            font-family: "Minecraft", monospace;
+            font-size: 0.7em;
+            image-rendering: pixelated;
+        }
+
+        .header {
+            width: 100%;
+            height: fit-content;
+            text-align: center;
+            font-size: 2rem;
+            white-space: nowrap;
+            font-family: 'Rubik Puddles';
+            user-select: none;
+        }
+
+        .header > img{
+            width: 80%;
+            max-height: 15vh;
+            object-fit: contain;
+        }
+
+        .content {
+            display: grid;
+            grid-template-areas:
+                "images images images settings"
+                "images images images settings"
+                "images images images settings";
+            grid-template-columns: repeat(4, 1fr);
+            grid-auto-rows: 1fr;
+            width: 100%;
+            height: 80%;
+            /* background-color: aquamarine; */
+            gap: 10px;
+        }
+
+        .pastries {
+            grid-area: images;
+            /* background-color: chocolate; */
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            /* grid-auto-rows: minmax(0, 30%); */
+            grid-auto-rows: max-content;
+        }
+
+        .settings {
+            padding: 10px;
+            grid-area: settings;
+            background-color: #f6f7f8;
+            border: #bbb 2px solid;
+            border-radius: 1vmax;
+            /* height: 83vh; */
+            margin-left: 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .footer {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .pastry {
+            background-color: #f6f7f8;
+            border: 1px #bbb solid;
+            border-radius: 1vmax;
+            /* padding: 5px; */
+            display: flex;
+            flex-direction: column;
+            transition: all 0.2s;
+        }
+
+        .pastry:hover {
+            box-shadow: 4px 4px rgba(0, 0, 0, .5);
+            transform: scale(1.05);
+        }
+
+        .name {
+            color: rgb(24, 49, 71);
+            font-weight: bold;
+            display: block;
+        }
+
+        .pastry-image {
+            width: 55%;
+            display: inline-block;
+            justify-self: left;
+            object-fit: contain;
+            max-height: 100%;
+            align-self: flex-start;
+            object-position: left top;
+        }
+
+        .pastry-description {
+            justify-self: right;
+            display: inline-block;
+            margin: 0;
+            align-self: flex-start;
+            width: 40%;
+            /* font-family: cursive; */
+        }
+
+        .upper-part {
+            box-sizing: border-box;
+            padding: 10px;
+            width: 100%;
+            height: 65%;
+            border-bottom: 1px #bbb solid;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .calory-count {
+            margin: 0 10px;
+        }
+
+        .and {
+            color: orangered;
+            font-weight: bold;
+        }
+
+        .filters {
+            display: grid;
+            grid-auto-flow: column;
+            grid-template-rows: repeat(6, 1fr);
+            grid-template-columns: 75%;
+            gap: 20px;
+            width: 100%;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        .calory-filter {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            /* height: 30%; */
+            margin-bottom: 20px;
+        }
+
+        .filter {
+            text-align: center;
+            padding: 10px;
+            font-size: 1.2em;
+            background-color: #ebebeb;
+            border: 1px #ccc solid;
+            border-radius: 0.75vmax;
+            /* width: 80%; */
+            user-select: none;
+        }
+
+        .filter:hover {
+            cursor: pointer;
+        }
+        
+        input:checked + .filter{
+            background-color: aquamarine;
+        }
+
+        body:has(#cake:checked) .pastry:not(.cake){
+            display: none;
+        }
+        body:has(#pie:checked) .pastry:not(.pie){
+            display: none;
+        }
+        body:has(#cookie:checked) .pastry:not(.cookie){
+            display: none;
+        }
+        body:has(#drink:checked) .pastry:not(.drink){
+            display: none;
+        }
+        body:has(#desert:checked) .pastry:not(.desert){
+            display: none;
+        }
+
+        body:has(#all:checked) .pastry{
+            display: flex;
+        }
+
+        .full-bar, .half-bar, .empty-bar{
+            height: 1rem;
+            width: 1rem;
+            background-repeat: no-repeat;
+            border: none;
+            display: inline-block;
+            background-size: cover;
+            image-rendering: pixelated;
+        }
+
+        .full-bar{
+            background-image: url("https://static.wikia.nocookie.net/farmersdelight/images/c/c4/Hunger_%28icon%29.png/revision/latest?cb=20221013083500");
+        }
+        
+        .half-bar{
+            background-image: url("https://static.wikia.nocookie.net/farmersdelight/images/5/50/Half_Hunger_%28icon%29.png/revision/latest?cb=20221013083537");
+        }
+
+        .empty-bar{
+            background-image: url("https://static.wikia.nocookie.net/farmersdelight/images/2/23/Empty_Hunger_%28icon%29.png/revision/latest?cb=20221013083745");
+        }
+
+        @media (max-width: 1200px) {
+
+            /* body{
+                background-color: antiquewhite;
+            } */
+            .content {
+                grid-template-areas:
+                    "settings settings settings"
+                    "images images images"
+                    "images images images"
+                    "images images images";
+                grid-template-columns: repeat(3, 1fr);
+                grid-template-rows: auto repeat(3, 1fr);
+                padding: 10px;
+                box-sizing: border-box;
+            }
+
+            .calory-filter {
+                display: none;
+            }
+
+            .settings {
+                background: none;
+                border: none;
+                margin: 0;
+                padding: 0;
+            }
+
+            .filters {
+                gap: 10px;
+                grid-auto-flow: row;
+                grid-template-columns: repeat(3, 1fr);
+                grid-template-rows: repeat(2, 1fr);
+            }
+
+            .email {
+                display: block;
+            }
+
+            .email::before {
+                content: "\2709";
+            }
+
+            .date {
+                align-self: flex-end;
+            }
+
+            .name {
+                display: inline;
+            }
+
+            .upper-part {
+                height: 100%;
+                border: none;
+                flex-direction: column;
+                padding-bottom: 0;
+                display: grid;
+                grid-auto-flow: column;
+                grid-template-rows: 1fr auto;
+                grid-template-columns: 1fr;
+                gap: 5px;
+            }
+
+            .pastry-image {
+                width: 100%;
+                display: block;
+                max-height: 100%;
+            }
+
+            .pastry-description {
+                width: 100%;
+                padding: 5px;
+                box-sizing: border-box;
+            }
+
+            .calory-count {
+                display: none;
+            }
+
+            .name::before {
+                content: " ";
+            }
+
+
+            .pastries {
+                /* grid-auto-rows: minmax(0, 30%); */
+                gap: 10px;
+            }
+
+            .pastry:hover {
+                box-shadow: 4px 4px rgba(0, 0, 0, .5);
+                transform: scale(1.02);
+            }
+        }
+
+        @media (max-width: 730px) {
+            .filters {
+                gap: 10px;
+                grid-auto-flow: row;
+                grid-template-columns: repeat(2, 1fr);
+                grid-template-rows: repeat(3, 1fr);
+            }
+            .header{
+                font-size: 1em
+            }
+            .pastries{
+                grid-template-columns: repeat(1, 1fr);
+            }
+            /* .pastry-image {
+                width: 100%;
+                display: block;
+                max-height: 100%;
+            } */
+            .pastry-description{
+            display: none;
+            }
+            
+            .pastry{
+                padding: 0 ;
+                overflow: hidden;
+            }
+            .upper-part{
+                gap: 0;
+                padding: 0;
+            }
+            .pastry:hover {
+                box-shadow: none;
+                transform: none;
+            }
+
+            .footer{
+                display: block;
+            }
+
+            .contacts{
+                margin-bottom: 0;
+            }
+
+            .date{
+                margin-top: 0;
+            }
+        }
+
+        @media (max-width: 375px) {
+            body {
+                display: none;
+            }
+
+            .header h1{
+                white-space: normal;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header class="header">
+        <!-- <h1>Тортики <span class="and">&</span> Тістечка</h1> -->
+         <img src="https://i.imgur.com/wqSocVR.png" alt="Even cooler logo">
+    </header>
+    <div class="content">
+<div class="pastries">
+
+            <div class="pastry pie">
+                <div class="upper-part">
+                    <img class="pastry-image"
+                        src="https://static.wikia.nocookie.net/farmersdelight/images/f/fb/Apple_Pie.png/revision/latest?cb=20221013062858">
+                    <p class="pastry-description"><span class="type">Пиріг:</span><span class="name">Яблучний</span>
+                    </p>
+                </div>
+                <div class="calory-count">Насичення від порції: <div class="full-bar"></div><div class="full-bar"></div><div class="full-bar"></div><div class="full-bar"></div><div class="full-bar"></div><div class="full-bar"></div></div>
+            </div>
+
+            <div class="pastry cookie">
+                <div class="upper-part">
+                    <img class="pastry-image"
+                        src="https://static.wikia.nocookie.net/farmersdelight/images/3/3d/Honey_Cookie.png/revision/latest?cb=20221013064525">
+                    <p class="pastry-description"><span class="type">Печиво:</span><span class="name">Медове</span>
+                    </p>
+                </div>
+                <div class="calory-count">Насичення від порції: <div class="full-bar"></div><div class="full-bar"></div></div>
+            </div>
+
+            <div class="pastry drink">
+                <div class="upper-part">
+                    <img class="pastry-image"
+                        src="https://static.wikia.nocookie.net/farmersdelight/images/7/7c/Hot_Cocoa.png/revision/latest?cb=20221013064638">
+                    <p class="pastry-description"><span class="type">Напій:</span><span class="name">Гарячий шоколад</span>
+                    </p>
+                </div>
+                <div class="calory-count">Насичення від порції: <div class="empty-bar"></div></div>
+            </div>
+
+            <div class="pastry cake">
+                <div class="upper-part">
+                    <img class="pastry-image"
+                        src="https://static.wikia.nocookie.net/farmersdelight/images/1/1c/Cake_Slice.png/revision/latest?cb=20221013063533">
+                    <p class="pastry-description"><span class="type">Торт:</span><span class="name">Шматочок</span>
+                    </p>
+                </div>
+                <div class="calory-count">Насичення від порції: <div class="full-bar"></div><div class="full-bar"></div></div>
+            </div>
+
+            <div class="pastry desert">
+                <div class="upper-part">
+                    <img class="pastry-image"
+                        src="https://static.wikia.nocookie.net/farmersdelight/images/2/25/Glow_Berry_Custard.png/revision/latest?cb=20221013064311">
+                    <p class="pastry-description"><span class="type">Десерт:</span><span class="name">Заварний крем із сяйних ягід </span>
+                    </p>
+                </div>
+                <div class="calory-count">Насичення від порції: <div class="full-bar"></div><div class="full-bar"></div><div class="full-bar"></div><div class="full-bar"></div><div class="full-bar"></div><div class="full-bar"></div><div class="half-bar"></div></div>
+            </div>
+
+            <div class="pastry pie">
+                <div class="upper-part">
+                    <img class="pastry-image"
+                        src="https://static.wikia.nocookie.net/farmersdelight/images/4/45/Sweet_Berry_Cheesecake.png/revision/latest?cb=20221013073057">
+                    <p class="pastry-description"><span class="type">Пиріг:</span><span class="name">З солодких ягід</span>
+                    </p>
+                </div>
+                <div class="calory-count">Насичення від порції: <div class="full-bar"></div><div class="full-bar"></div><div class="full-bar"></div><div class="full-bar"></div><div class="full-bar"></div><div class="full-bar"></div></div>
+            </div>
+
+            <div class="pastry drink">
+                <div class="upper-part">
+                    <img class="pastry-image"
+                        src="https://static.wikia.nocookie.net/farmersdelight/images/5/56/Melon_Juice.png/revision/latest?cb=20221013064845">
+                    <p class="pastry-description"><span class="type">Напій:</span><span class="name">Кавуновий сік</span>
+                    </p>
+                </div>
+                <div class="calory-count">Насичення від порції: <div class="empty-bar"></div></div>
+            </div>
+
+            <div class="pastry cookie">
+                <div class="upper-part">
+                    <img class="pastry-image"
+                        src="https://static.wikia.nocookie.net/farmersdelight/images/2/23/Sweet_Berry_Cookie.png/revision/latest?cb=20221013073129">
+                    <p class="pastry-description"><span class="type">Печиво:</span><span class="name">З ягодами</span>
+                    </p>
+                </div>
+                <div class="calory-count">Насичення від порції: <div class="full-bar"></div><div class="full-bar"></div></div>
+            </div>
+
+            <div class="pastry desert">
+                <div class="upper-part">
+                    <img class="pastry-image"
+                        src="https://static.wikia.nocookie.net/farmersdelight/images/1/18/Melon_Popsicle.png/revision/latest?cb=20221013064902">
+                    <p class="pastry-description"><span class="type">Десерт:</span><span class="name">Кавунове морозиво</span>
+                    </p>
+                </div>
+                <div class="calory-count">Насичення від порції: <div class="full-bar"></div><div class="full-bar"></div><div class="half-bar"></div></div>
+            </div>
+
+        </div>
+        <div class="settings">
+            <div class="calory-filter">
+                <p>Калорії у порції</p>
+                <input type="range" min="0" max="20" name="" id="">
+                <p>Від 0 до 20 насичення</p>
+            </div>
+            <div class="filters">
+                <input type="radio" name="filter" id="pie" hidden><label for="pie" class="filter">Пиріг</label>
+                <input type="radio" name="filter" id="cake" hidden><label for="cake" class="filter">Торт</label>
+                <input type="radio" name="filter" id="cookie" hidden><label for="cookie" class="filter">Печиво</label>
+                <input type="radio" name="filter" id="drink" hidden><label for="drink" class="filter">Напої</label>
+                <input type="radio" name="filter" id="desert" hidden><label for="desert" class="filter">Десерт</label>
+                <input type="radio" name="filter" id="all" hidden checked><label for="all" class="filter">Всі</label>
+            </div>
+        </div>
+    </div>
+    <footer class="footer">
+        <p class="contacts">Контакти: <a class="email" href="https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+                target="_blank">lol@nuh.uh</a></p>
+        <p class="date">&copy;2026 Loooool</p>
+    </footer>
+</body>
+
+</html>
